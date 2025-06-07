@@ -1,6 +1,10 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+// Fill with white background before drawing starts for smooth conversion to grayscale later
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 let drawing = false;
 
 function getMousePos(evt) {
@@ -23,7 +27,7 @@ canvas.addEventListener("mousemove", (e) => {
   const pos = getMousePos(e);
   ctx.lineTo(pos.x, pos.y);
   ctx.strokeStyle = "black";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 10;
   ctx.lineCap = "round";
   ctx.stroke();
 });
@@ -37,7 +41,9 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function submitDrawing() {
