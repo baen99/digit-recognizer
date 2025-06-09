@@ -1,10 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import base64
-import re
-from PIL import Image
-from io import BytesIO
 import numpy as np
-from matplotlib import pyplot as plt
 import utils
 import pickle
 
@@ -16,33 +11,40 @@ model = pickle.load(open("model_LogReg.pkl", "rb"))
 def index():
     return render_template("index.html")
 
-#TODO: assert image has correct dimension/size/shape
-# TODO: assert image is not empty/something has been drawn at all
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
 
-    data = request.get_json()
-    image_data = data["image"]
+    data = request.get_json(silent=True)
 
-    # Remove header: "data:image/png;base64,..."
-    image_data = re.sub("^data:image/.+;base64,", "", image_data)
-
-    # Decode from base64 to raw bytes
-    image_bytes = base64.b64decode(image_data)
-
-    # Convert to a PIL image
-    image = Image.open(BytesIO(image_bytes))
+    if not data:
+        return jsonify({"error_message": "Ungültiges oder fehlendes JSON."}), 400
+    # 2 different ways of error handling just for practice's sake
+    try:
+        assert "image" in data, "Dict enthält keinen key 'image'."
+    except AssertionError as e:
+        return jsonify({"error_message": e.args[0]}), 400
     
-    preprocessed_image = utils.preprocess(image)
+
+    image_data = data["image"]
+    
+    try:
+        preprocessed_image = utils.preprocess(image_data)
+    except utils.BlankCanvasError as e:
+        # rasied if client sends empty canvas
+        return jsonify({"error_message": e.error_message}), 400
+    
 
     # model expects batch dimension and flattened images
     input = np.expand_dims(preprocessed_image.flatten(), axis=0)
 
-    prediction = model.predict(input).item()
-    print(prediction)
+    probabilities = model.predict_proba(input) # probabilites for all 10 classes
+    prediction = probabilities.flatten().argmax().item()
+    confidence = round(probabilities.max().item()*100)
 
 
-    return jsonify({"message": "Image received"})
+    return jsonify({"prediction": prediction, "confidence": confidence}), 200
 
 
 

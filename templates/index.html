@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8" />
     <title>Handschriftliche Ziffernerkennung</title>
+    <link rel="icon" href="{{ url_for('static', filename='mnist-3-0.png') }}" type="image/png">
     <style>
-        canvas {padding: 5px; margin-left: 20em;}
+        body {
+            margin-left: 30em;
+            background-color: lightblue;
+        }
+        button {
+            padding: 5px;
+            /*margin-bottom: 20px;*/
+            font-size: large;
+            /*display: flex;
+            flex-direction: row;*/
+        }
+        p {
+            font-size: larger;
+        }
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="300" height="300" style="border:1px solid black;"></canvas>
-    <button onclick="submitDrawing()">Submit</button>
-    <button onclick="clearCanvas()">Clear</button>
-    <script src="/static/script.js"></script>
+    <h2>Bitte zeichne eine Ziffer:</h2>
+    <div style="display: grid; grid-template-rows: auto auto; align-items: center; gap: 10px;">
+        <canvas id="canvas" width="300" height="300" style="border:1px solid black;"></canvas>
+        <div>
+            <button onclick="submitDrawing()">Submit</button>
+            <button onclick="clearCanvas()">Clear</button>
+        </div>
+        <p id="result"></p>
+        <script src="/static/script.js"></script>
+    </div>
 </body>
 </html>

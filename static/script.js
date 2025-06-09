@@ -47,6 +47,12 @@ function clearCanvas() {
 }
 
 function submitDrawing() {
+
+    /*if (ctx.fillStyle === "white") {
+      document.getElementById("result").innerText = "Nichts gezeichent!";
+      return
+    }*/
+
     const dataURL = canvas.toDataURL() // returns current content of canvas as image
 
     fetch("/predict", {
@@ -54,8 +60,17 @@ function submitDrawing() {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({image: dataURL})
     })
-    .then(res => res.json())
-    .then(data => {
-        console.log(data.message);
+    .then(async (response) => {
+      const data = await response.json() // access json body even if response status is erroneous to get custom error message
+
+        if (!response.ok) {
+            throw new Error("Server hat einen Fehler zurückgegeben: " + data.error_message);
+        }
+
+        document.getElementById("result").innerText = "Du hast eine " + data.prediction + " gezeichnet. (" + data.confidence + "% sicher)";
+
+    })
+    .catch(error => {
+        document.getElementById("result").innerText = error.message;
     });
 }
