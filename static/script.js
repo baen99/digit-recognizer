@@ -27,7 +27,7 @@ canvas.addEventListener("mousemove", (e) => {
   const pos = getMousePos(e);
   ctx.lineTo(pos.x, pos.y);
   ctx.strokeStyle = "black";
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 30;
   ctx.lineCap = "round";
   ctx.stroke();
 });
@@ -47,11 +47,6 @@ function clearCanvas() {
 }
 
 function submitDrawing() {
-
-    /*if (ctx.fillStyle === "white") {
-      document.getElementById("result").innerText = "Nichts gezeichent!";
-      return
-    }*/
 
     const dataURL = canvas.toDataURL() // returns current content of canvas as image
 
